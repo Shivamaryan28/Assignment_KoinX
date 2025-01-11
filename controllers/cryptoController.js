@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { CryptoData } from '../models/CryptoDataModel.js';
+import {mean} from "mathjs"
 
 export const fetchCryptoData = async (req,res) => {
     const url = process.env.COINGECKO_URL;
