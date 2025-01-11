@@ -49,3 +49,53 @@ export const fetchCryptoData = async (req,res) => {
       return error
     }
   }
+
+
+  export const getCryptoStats = async (req, res) => {
+    try {
+      let {coin} = req.query;
+      coin = coin.toLowerCase()
+      const data = await CryptoData.findOne(
+          { name: coin },
+          { _id:0,price: 1, "24hChange": 1, marketCap: 1 } 
+        );
+        
+      res.status(200).json(data);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
+
+
+  const calculateStandardDeviation = (data) => {
+    const meanValue = mean(data);
+    
+    const squaredDifferences = data.map(value => Math.pow(value - meanValue, 2));
+  
+    const meanSquaredDifference = mean(squaredDifferences);
+  
+    return Math.sqrt(meanSquaredDifference);
+  };
+  
+  export const getDeviation = async (req, res) => {
+    let { coin } = req.query;
+    coin = coin.toLowerCase();
+  
+    try {
+      const records = await CryptoData.find({ name: coin })
+        .sort({ timestamp: -1 })
+        .limit(100);
+  
+      if (records.length === 0) {
+        return res.status(404).json({ message: 'No data found for this cryptocurrency.' });
+      }
+      const prices = records.map(record => record.price);
+      const standardDeviation = calculateStandardDeviation(prices);
+  
+      res.json({standardDeviation: standardDeviation.toFixed(2) });
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
+  
