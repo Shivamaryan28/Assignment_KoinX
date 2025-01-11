@@ -88,77 +88,136 @@ Cron Expression: `0 */2 * * *`
 
 ---
 
-#### 2. **Get Cryptocurrency Data**
+#### 2. **Trigger Initial Data Fetch**
+- **URL**: `POST /api/v1/update-data`
+- **Description**: Route to initially populate the database with cryptocurrency data.
+- **Response**:
+  ```json
+  {
+    "message": "Database updated successfully."
+  }
+  ```
+
+---
+
+#### 3. **Get Latest Cryptocurrency Data**
 - **URL**: `GET /api/v1/stats`
-- **Description**: Route to fetch latest data of the coin
-- **Response** (Example):
+- **Description**: Route to fetch the latest data of the specified coin.
+- **Query Parameters**:
+  - `coin` (string): The name of the cryptocurrency. Options include:
+    - `bitcoin`
+    - `matic`
+    - `ethereum`
+- **Response** (Example for `bitcoin`):
+  ```json
+  {
+    "price": 94289,
+    "marketCap": 1867147323124.2559,
+    "24hChange": 1.0025448588945287
+  }
+  ```
+
+---
+
+#### 4. **Get All Cryptocurrency Data**
+- **URL**: `GET /api/v1/stats-all`
+- **Description**: Route to fetch all available data of the specified coin.
+- **Query Parameters**:
+  - `coin` (string): The name of the cryptocurrency. Options include:
+    - `bitcoin`
+    - `matic`
+    - `ethereum`
+- **Response** (Example for `bitcoin`):
   ```json
   [
     {
-      "name": "Bitcoin",
-      "price": 35000,
-      "marketCap": 700000000,
-      "change24h": -1.5,
-      "timestamp": "2025-01-11T12:00:00.000Z"
+      "price": 94289,
+      "marketCap": 1867147323124.2559,
+      "24hChange": 1.0025448588945287,
+      "timestamp": "2025-01-11T17:11:00.372Z"
     },
     {
-      "name": "Ethereum",
-      "price": 2000,
-      "marketCap": 300000000,
-      "change24h": 2.0,
-      "timestamp": "2025-01-11T12:00:00.000Z"
+      "price": 94263,
+      "marketCap": 1870201007496.0984,
+      "24hChange": 0.7456978871250971,
+      "timestamp": "2025-01-11T17:05:27.081Z"
     }
   ]
   ```
 
 ---
-#### 3. **Fetch data for all Coins**
-- **URL**: `GET /api/v1/stats-all`
-- **Description**: Route to fetch all data of the coin
-- **Response**:
-  ```json
-  {
-    [
-    {
-        "price": 94289,
-        "marketCap": 1867147323124.2559,
-        "24hChange": 1.0025448588945287,
-        "timestamp": "2025-01-11T17:11:00.372Z"
-    },
-    {
-        "price": 94263,
-        "marketCap": 1870201007496.0984,
-        "24hChange": 0.7456978871250971,
-        "timestamp": "2025-01-11T17:05:27.081Z"
-    }
-     ]
-  }
-  
 
----
-
-#### 4. **Get Standard Deviation of Prices**
-- **URL**: `GET /api/v1/deviation/:coin`
+#### 5. **Get Standard Deviation of Prices**
+- **URL**: `GET /api/v1/deviation`
 - **Description**: Calculates the standard deviation of the price for the last 100 records of the specified cryptocurrency.
-- **Path Parameters**:
-  - `coin` (string): Name of the cryptocurrency (e.g., `bitcoin`, `ethereum`, `matic`).
+- **Query Parameters**:
+  - `coin` (string): The name of the cryptocurrency. Options include:
+    - `bitcoin`
+    - `matic`
+    - `ethereum`
 - **Response** (Example for `bitcoin`):
   ```json
   {
-    "coin": "bitcoin",
-    "standardDeviation": "4082.48"
+    "standardDeviation": "0.35"
   }
   ```
 
 ---
 
-#### 5. **Trigger Initial Data Fetch**
-- **URL**: `POST /api/v1/update-data`
-- **Description**: Route to intially populate the database
+### **Request Examples**
+
+#### **Get Latest Cryptocurrency Data (Bitcoin)**
+
+- **Request**:
+  ```bash
+  GET /api/v1/stats?coin=bitcoin
+  ```
+
 - **Response**:
   ```json
   {
-    "message": "Data population successful"
+    "price": 94289,
+    "marketCap": 1867147323124.2559,
+    "24hChange": 1.0025448588945287
+  }
+  ```
+
+#### **Get All Cryptocurrency Data (Ethereum)**
+
+- **Request**:
+  ```bash
+  GET /api/v1/stats-all?coin=ethereum
+  ```
+
+- **Response**:
+  ```json
+  [
+    {
+      "price": 2834.95,
+      "marketCap": 335250418829.7124,
+      "24hChange": 0.4362787752337582,
+      "timestamp": "2025-01-11T17:10:00.372Z"
+    },
+    {
+      "price": 2832.72,
+      "marketCap": 335020820182.1054,
+      "24hChange": 0.3154674926709207,
+      "timestamp": "2025-01-11T17:00:27.081Z"
+    }
+  ]
+  ```
+
+#### **Get Standard Deviation of Prices (Matic)**
+
+- **Request**:
+  ```bash
+  GET /api/v1/deviation?coin=matic
+  ```
+
+- **Response**:
+  ```json
+  {
+    "standardDeviation": "0.62"
   }
   ```
 
